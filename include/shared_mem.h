@@ -5,7 +5,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <stdbool.h>
-//#include "circular_buffer.h"
+#include "buffer.h"
 //#include "semaphore_union.h"
 
 #define MESSAGE_MAX_SIZE (size_t)4096
@@ -25,7 +25,7 @@ typedef struct
     //union semun sem2_arg;
     //union semun sem3_arg;
     
-    //circular_buffer *buffer;
+    shared_buffer *buffer;
 } shared_memory;
 
 int shm_create();

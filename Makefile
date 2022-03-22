@@ -5,4 +5,4 @@ dir:
 	cd build
 
 creator: dir 
-	gcc -o build/creator src/creator.c -lm
+	gcc -o build/creator src/creator.c  src/shared_mem.c -lm
