@@ -49,4 +49,42 @@ int main(int argc, char **argv)
     // attach this process to the shared memory. This will also initialize their memory spaces 
     sm_ptr->buffer = (shared_buffer*)shmat(sm_ptr->cb_shmid, NULL, 0);
     (*sm_ptr->buffer).messages = (message*)shmat(sm_ptr->m_shmid, NULL, 0);
+    
+    // suspend producers initialize
+    sm_ptr->suspend_producers=false;
+
+    // initialize counters
+    sm_ptr->total_messages = 0;
+    sm_ptr->consumers_count = 0;
+    sm_ptr->producers_count = 0;
+
+    // initialize semaphores. Will use a semaphore set of 3 as follow:
+    //      1. semaphore 0: controls buffer access
+    //      2. semaphore 1: prevents underflow
+    //      3. semaphore 2: prevents overflow
+
+    // semaphore 0 initialization
+    sm_ptr->sem1_arg.array = (unsigned short*)shmat(shmget(key4, sizeof(unsigned short), IPC_CREAT|0666),0,0);
+    sm_ptr->sem1_arg.buf = (struct semid_ds*)shmat(shmget(key5, sizeof(struct semid_ds), IPC_CREAT|0666),0,0);
+    sm_ptr->sem1_arg.val = 1;
+    semctl(sm_ptr->semid, 0, SETVAL, sm_ptr->sem1_arg);
+
+    // semaphore 1 initialization
+    sm_ptr->sem2_arg.array = (unsigned short*)shmat(shmget(key6, sizeof(unsigned short), IPC_CREAT|0666),0,0);
+    sm_ptr->sem2_arg.buf = (struct semid_ds*)shmat(shmget(key7, sizeof(struct semid_ds), IPC_CREAT|0666),0,0);
+    sm_ptr->sem2_arg.val = 0;
+    semctl(sm_ptr->semid, 1, SETVAL, sm_ptr->sem2_arg);
+
+    // semaphore 2 initialization
+    sm_ptr->sem3_arg.array = (unsigned short*)shmat(shmget(key8, sizeof(unsigned short), IPC_CREAT|0666),0,0);
+    sm_ptr->sem3_arg.buf = (struct semid_ds*)shmat(shmget(key9, sizeof(struct semid_ds), IPC_CREAT|0666),0,0);
+    sm_ptr->sem3_arg.val = buffer_size;
+    semctl(sm_ptr->semid, 2, SETVAL, sm_ptr->sem3_arg);    
+    
+    // circular buffer initialization
+    CB_init(sm_ptr->buffer, buffer_size);
+
+    printf("shared memory created! your id is %d\n", shmid);
+
+    return 0;
 }

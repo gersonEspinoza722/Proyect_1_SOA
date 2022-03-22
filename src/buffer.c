@@ -1,8 +1,8 @@
 #include <string.h>
 
-#include "../utilities/time_util.h"
-#include "buffer.h"
-#include "message.h"
+#include "../include/timer.h"
+#include "../include/buffer.h"
+#include "../include/message.h"
 
 message *msg;
 

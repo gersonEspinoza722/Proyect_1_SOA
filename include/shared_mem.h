@@ -1,12 +1,12 @@
-#ifndef SHARED_MEMORY_H
-#define SHARED_MEMORY_H
+#ifndef SHARED_MEM_H
+#define SHARED_MEM_H
 
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <stdbool.h>
 #include "buffer.h"
-//#include "semaphore_union.h"
+#include "semaphore.h"
 
 #define MESSAGE_MAX_SIZE (size_t)4096
 
@@ -21,9 +21,9 @@ typedef struct
     int m_shmid;
     int semid;
 
-    //union semun sem1_arg;
-    //union semun sem2_arg;
-    //union semun sem3_arg;
+    union semun sem1_arg;
+    union semun sem2_arg;
+    union semun sem3_arg;
     
     shared_buffer *buffer;
 } shared_memory;
